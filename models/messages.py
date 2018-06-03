@@ -2,7 +2,7 @@ import hashlib
 import uuid
 from time import time
 
-from client.models.base import Jsonable
+from models.base import Jsonable
 
 
 class Message(Jsonable):

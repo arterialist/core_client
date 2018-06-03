@@ -1,6 +1,6 @@
-from client.models.actions import Action
-from client.models.base import Jsonable
-from client.models.messages import Message
+from models.actions import Action
+from models.base import Jsonable
+from models.messages import Message
 
 
 class Packet(Jsonable):

@@ -1,4 +1,4 @@
-from client.models.base import Jsonable
+from models.base import Jsonable
 
 
 class Action(Jsonable):

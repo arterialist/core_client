@@ -2,7 +2,6 @@ import socket
 import threading
 from json import JSONDecodeError
 
-
 # load modules
 import layers
 from modules.default_modules import SendAsJSONModule, Base64EncodeModule
@@ -70,7 +69,6 @@ def p2p_new_message_listener():
             recv_msg = layers.socket_handle_received(current_connection, data.decode('utf8'), loaded_modules)
             if new_message_callback:
                 new_message_callback(recv_msg)
-            print(recv_msg.__dict__)
         except UnicodeDecodeError:
             reason = "Corrupted message"
         except JSONDecodeError:
@@ -89,7 +87,6 @@ def server_new_message_listener():
         try:
             if new_message_callback:
                 new_message_callback('\n' + data.decode('utf8'))
-            print('\n' + data.decode('utf8'))
         except UnicodeDecodeError:
             print('Corrupted message')
 
@@ -110,9 +107,8 @@ def socket_listen_on():
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind(('', local_port))
-    except socket.error as e:
+    except socket.error:
         print('Bind failed.')
-        print(e)
         return
 
     sock.listen(256)

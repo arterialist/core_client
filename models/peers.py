@@ -12,7 +12,7 @@ class Peer(Jsonable):
 
 
 class Client(Peer):
-    def __init__(self, ip: str, port: int, nickname: str, peer_id: str = None):
+    def __init__(self, ip: str, port: int, nickname: str = None, peer_id: str = None):
         super().__init__(ip, port, peer_id)
         self.nickname = nickname
 

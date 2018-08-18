@@ -4,6 +4,9 @@ import threading
 from json import JSONDecodeError
 
 import layers
+from models.actions import ConnectAction
+from models.messages import Message
+from models.packets import Packet
 from models.peers import Client, Server, Peer
 from modules.default_modules import SendAsJSONModule, Base64EncodeModule
 
@@ -219,6 +222,14 @@ def server_connect(remote_host: str, remote_port: int) -> tuple:
     }
 
     incoming_message_thread.start()
+
+    send_message(
+        peer.peer_id,
+        Packet(
+            action=ConnectAction(),
+            message=Message()
+        )
+    )
     print('Connected to server')
     return None, peer
 

@@ -4,7 +4,7 @@ this file is created to make functionality growth fast
 import copy
 
 from models.base import Jsonable
-from modules.module import STATUS_ERROR, STATUS_DROP, BaseModule
+from modules.module import STATUS_ERROR, STATUS_DROP, BaseModule, STATUS_OK
 
 
 def socket_send_data(to, what: Jsonable, modules: dict, error_callback=None):
@@ -15,9 +15,9 @@ def socket_send_data(to, what: Jsonable, modules: dict, error_callback=None):
 
     what_copy = copy.deepcopy(what)
     for action in pre_send:
-        what_copy, status_code = action.on_send(what_copy)
+        status_code, what_copy = action.on_send(what_copy)
         if status_code == STATUS_ERROR and error_callback:
-            error_callback(action)
+            error_callback(action, what_copy)
             return
 
         if status_code == STATUS_DROP:
@@ -26,9 +26,9 @@ def socket_send_data(to, what: Jsonable, modules: dict, error_callback=None):
     what_copy = transformer.on_send(what_copy)
 
     for action in post_send:
-        what_copy, status_code = action.on_send(what_copy)
+        status_code, what_copy = action.on_send(what_copy)
         if status_code == STATUS_ERROR and error_callback:
-            error_callback(action)
+            error_callback(action, what_copy)
             return
 
         if status_code == STATUS_DROP:
@@ -48,9 +48,9 @@ def socket_handle_received(from_s, what, modules: dict, error_callback=None):
 
     what_copy = copy.deepcopy(what)
     for action in post_send:
-        what_copy, status_code = action.on_receive(what_copy, from_s)
+        status_code, what_copy = action.on_receive(what_copy, from_s)
         if status_code == STATUS_ERROR and error_callback:
-            error_callback(action)
+            error_callback(action, what_copy)
             return what, status_code
 
         if status_code == STATUS_DROP:
@@ -59,12 +59,12 @@ def socket_handle_received(from_s, what, modules: dict, error_callback=None):
     what_copy = transformer.on_receive(what_copy, from_s)
 
     for action in pre_send:
-        what_copy, status_code = action.on_receive(what_copy, from_s)
+        status_code, what_copy = action.on_receive(what_copy, from_s)
         if status_code == STATUS_ERROR and error_callback:
-            error_callback(action)
+            error_callback(action, what_copy)
             return what, status_code
 
         if status_code == STATUS_DROP:
             return what, status_code
 
-    return what_copy
+    return what_copy, STATUS_OK

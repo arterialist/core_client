@@ -76,8 +76,8 @@ def p2p_new_message_listener(peer: Client, connection: socket):
                 sockets.pop((peer.host, peer.port))
             break
         try:
-            recv_msg, status_code = layers.socket_handle_received(connection, data.decode('utf8'), loaded_modules,
-                                                                  lambda m: print(f"Error in module {m.__class__.__name__} on receive"))
+            recv_msg, status_code = layers.socket_handle_received(connection, data, loaded_modules,
+                                                                  lambda m, e: print(f"Error in module {m.__class__.__name__} on receive:\n{e}"))
             if new_message_callback and status_code == STATUS_OK:
                 new_message_callback(recv_msg, peer)
         except UnicodeDecodeError:
@@ -110,7 +110,7 @@ def server_new_message_listener(peer: Server, connection: socket):
             break
         try:
             recv_msg, status_code = layers.socket_handle_received(connection, data.decode('utf8'), loaded_modules,
-                                                                  lambda m: print(f"Error in module {m.__class__.__name__} on receive"))
+                                                                  lambda m, e: print(f"Error in module {m.__class__.__name__} on receive:\n{e}"))
             if new_message_callback and status_code == STATUS_OK:
                 new_message_callback(recv_msg, peer)
         except UnicodeDecodeError:
@@ -281,7 +281,7 @@ def send_message(peer_id, message):
     if peer_id in peers.keys():
         # pass your modules here
         layers.socket_send_data(peers.get(peer_id).get("socket"), message, loaded_modules,
-                                lambda m: print(f"Error in module {m.__class__.__name__} on send"))
+                                lambda m, e: print(f"Error in module {m.__class__.__name__} on send:\n{e}"))
 
 
 def disconnect(peer: Peer):

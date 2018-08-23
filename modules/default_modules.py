@@ -2,21 +2,19 @@ import base64
 import json
 
 from models.packets import Packet
-from .module import BaseModule
+from .module import BaseModule, BasePreModule, processing_method, BasePostModule
 
 
 class SendAsJSONModule(BaseModule):
     def __init__(self):
         super().__init__()
 
-    def process(self, data):
-        super().process(data)
-
+    def on_send(self, data):
+        super().on_send(data)
         return data.to_json().encode('utf8')
 
-    def process_s(self, data, sock):
-        super().process_s(data, sock)
-
+    def on_receive(self, data, sock):
+        super().on_receive(data, sock)
         return Packet.from_json_obj(json.loads(data))
 
     def disable(self):
@@ -24,18 +22,37 @@ class SendAsJSONModule(BaseModule):
         self.enabled = True
 
 
-class Base64EncodeModule(BaseModule):
+class Base64EncodeModule(BasePreModule):
     def __init__(self):
         super().__init__()
 
-    def process_s(self, data, sock):
-        super().process_s(data, sock)
+    @processing_method
+    def on_receive(self, data, sock):
+        super().on_receive(data, sock)
         if data.message and data.message.text:
             data.message.text = base64.b64decode(data.message.text.encode()).decode()
         return data
 
-    def process(self, data):
-        super().process(data)
+    @processing_method
+    def on_send(self, data):
+        super().on_send(data)
         if data.message and data.message.text:
             data.message.text = base64.b64encode(data.message.text.encode()).decode()
+        return data
+
+
+class Base64SendModule(BasePostModule):
+    def __init__(self):
+        super().__init__()
+
+    @processing_method
+    def on_receive(self, data, sock):
+        super().on_receive(data, sock)
+        data = base64.b64decode(data)
+        return data
+
+    @processing_method
+    def on_send(self, data):
+        super().on_send(data)
+        data = base64.b64encode(data)
         return data

@@ -8,13 +8,13 @@ from models.actions import ConnectAction
 from models.messages import Message
 from models.packets import Packet
 from models.peers import Client, Server, Peer
-from modules.default_modules import SendAsJSONModule, Base64EncodeModule, Base64SendModule
+from modules.default_modules import SendAsJSONModule, Base64EncodeModule, Base64SendModule, AES256SendModule
 from modules.module import STATUS_OK
 
 loaded_modules = {
     "transformer": SendAsJSONModule(),
     "model": [Base64EncodeModule()],
-    "binary": [Base64SendModule()]
+    "binary": [Base64SendModule(), AES256SendModule("yoursecretkey123", enabled=False)]
 }
 
 nickname = None

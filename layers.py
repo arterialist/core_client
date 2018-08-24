@@ -15,24 +15,28 @@ def socket_send_data(to, what: Jsonable, modules: dict, error_callback=None):
 
     what_copy = copy.deepcopy(what)
     for action in pre_send:
+        if not action.enabled:
+            continue
         status_code, what_copy = action.on_send(what_copy)
         if status_code == STATUS_ERROR and error_callback:
             error_callback(action, what_copy)
-            return
+            return what, status_code
 
         if status_code == STATUS_DROP:
-            return
+            return what, status_code
 
     what_copy = transformer.on_send(what_copy)
 
     for action in post_send:
+        if not action.enabled:
+            continue
         status_code, what_copy = action.on_send(what_copy)
         if status_code == STATUS_ERROR and error_callback:
             error_callback(action, what_copy)
-            return
+            return what, status_code
 
         if status_code == STATUS_DROP:
-            return
+            return what, status_code
 
     if to:
         to.sendall(what_copy)
@@ -48,6 +52,8 @@ def socket_handle_received(from_s, what, modules: dict, error_callback=None):
 
     what_copy = copy.deepcopy(what)
     for action in post_send:
+        if not action.enabled:
+            continue
         status_code, what_copy = action.on_receive(what_copy, from_s)
         if status_code == STATUS_ERROR and error_callback:
             error_callback(action, what_copy)
@@ -59,6 +65,8 @@ def socket_handle_received(from_s, what, modules: dict, error_callback=None):
     what_copy = transformer.on_receive(what_copy, from_s)
 
     for action in pre_send:
+        if not action.enabled:
+            continue
         status_code, what_copy = action.on_receive(what_copy, from_s)
         if status_code == STATUS_ERROR and error_callback:
             error_callback(action, what_copy)

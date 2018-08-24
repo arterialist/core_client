@@ -17,8 +17,8 @@ def processing_method(func):
             return STATUS_OK, result
         except PacketDropException:
             return STATUS_DROP, None
-        except:
-            return STATUS_ERROR, None
+        except Exception as e:
+            return STATUS_ERROR, e
 
     return wrapper
 

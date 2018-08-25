@@ -26,7 +26,7 @@ class SendAsJSONModule(BaseModule):
 
 
 class Base64EncodeModule(BasePreModule):
-    def __init__(self, enabled: bool):
+    def __init__(self, enabled: bool = True):
         super().__init__(enabled)
         self.enabled = enabled
 
@@ -46,7 +46,7 @@ class Base64EncodeModule(BasePreModule):
 
 
 class Base64SendModule(BasePostModule):
-    def __init__(self, enabled: bool):
+    def __init__(self, enabled: bool = True):
         super().__init__(enabled)
         self.enabled = enabled
 

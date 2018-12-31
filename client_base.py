@@ -4,6 +4,7 @@ import threading
 from json import JSONDecodeError
 
 import layers
+from config import METADATA_LEN
 from models.actions import ConnectAction
 from models.messages import Message
 from models.packets import Packet
@@ -62,7 +63,7 @@ def incoming_connections_listener():
 def p2p_new_message_listener(peer: Client, connection: socket):
     while peer.peer_id in peers.keys():
         try:
-            data = connection.recv(8)
+            data = connection.recv(METADATA_LEN)
         except OSError:
             continue
         reason = None
@@ -84,8 +85,8 @@ def p2p_new_message_listener(peer: Client, connection: socket):
                         return False
                 return True
 
-            if is_number(decoded_data[1:7]):
-                packet_len = int(decoded_data[1:7])
+            if is_number(decoded_data[1:METADATA_LEN - 1]):
+                packet_len = int(decoded_data[1:METADATA_LEN - 1])
                 data = connection.recv(packet_len)
 
         try:
@@ -108,7 +109,7 @@ def p2p_new_message_listener(peer: Client, connection: socket):
 def server_new_message_listener(peer: Server, connection: socket):
     while peer.peer_id in peers.keys():
         try:
-            data = connection.recv(8)
+            data = connection.recv(METADATA_LEN)
         except OSError:
             continue
         reason = None
@@ -130,8 +131,8 @@ def server_new_message_listener(peer: Server, connection: socket):
                         return False
                 return True
 
-            if is_number(decoded_data[1:7]):
-                packet_len = int(decoded_data[1:7])
+            if is_number(decoded_data[1:METADATA_LEN - 1]):
+                packet_len = int(decoded_data[1:METADATA_LEN - 1])
                 data = connection.recv(packet_len)
 
         try:

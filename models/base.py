@@ -1,18 +1,19 @@
 import json
+from operator import attrgetter
 
 
 class Jsonable:
-    @staticmethod
-    def from_json(json_string):
-        obj = Jsonable()
+    @classmethod
+    def from_json(cls, json_string):
+        obj = cls()
         obj.__dict__ = json.loads(json_string)
         return obj
 
-    @staticmethod
-    def from_json_obj(json_obj):
-        obj = Jsonable()
+    @classmethod
+    def from_json_obj(cls, json_obj):
+        obj = cls()
         obj.__dict__ = json_obj
         return obj
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+        return json.dumps(self, default=attrgetter('__dict__'), sort_keys=True)

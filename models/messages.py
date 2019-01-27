@@ -6,8 +6,13 @@ from models.base import Jsonable
 
 
 class Message(Jsonable):
-    def __init__(self, message_id: str = None, timestamp: int = None, text: str = None, attachments: list = None, mine: bool = False):
-        self.message_id = message_id if message_id else hashlib.md5(str(uuid.uuid4()).encode('utf-8')).hexdigest()
+    def __init__(self, message_id: str = None, timestamp: int = None,
+                 text: str = None, attachments: list = None,
+                 mine: bool = False):
+        self.message_id = (
+            message_id if message_id
+            else hashlib.md5(str(uuid.uuid4()).encode('utf-8')).hexdigest()
+        )
         self.timestamp = timestamp if timestamp else int(round(time() * 1000))
         self.text = text
         self.attachments = attachments

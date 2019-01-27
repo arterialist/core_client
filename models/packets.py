@@ -4,14 +4,15 @@ from models.messages import Message, Data
 
 
 class Packet(Jsonable):
-    def __init__(self, action: Action = None, message: Message = None, data: Data = None):
+    def __init__(self, action: Action = None, message: Message = None,
+                 data: Data = None):
         self.action = action
         self.message = message
         self.data = data
 
-    @staticmethod
-    def from_json_obj(json_obj):
-        packet = Packet(
+    @classmethod
+    def from_json_obj(cls, json_obj):
+        packet = cls(
             action=Action.from_json_obj(
                 json_obj=json_obj["action"]),
             message=Message.from_json_obj(

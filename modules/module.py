@@ -50,22 +50,22 @@ class BaseModule:
 class BasePreModule(BaseModule):
     def on_receive(self, data, sock):
         super().on_receive(data, sock)
-        if type(data) is bytes:
+        if isinstance(data, bytes):
             raise Exception("Invalid module usage. Got <bytes> data")
 
     def on_send(self, data):
         super().on_send(data)
-        if type(data) is bytes:
+        if isinstance(data, bytes):
             raise Exception("Invalid module usage. Got <bytes> data")
 
 
 class BasePostModule(BaseModule):
     def on_receive(self, data, sock):
         super().on_receive(data, sock)
-        if type(data) is not bytes:
+        if not isinstance(data, bytes):
             raise Exception(f"Invalid module usage. Got {type(data)} data instead of <bytes>")
 
     def on_send(self, data):
         super().on_send(data)
-        if type(data) is not bytes:
+        if not isinstance(data, bytes):
             raise Exception(f"Invalid module usage. Got {type(data)} data instead of <bytes>")
